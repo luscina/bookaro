@@ -1,27 +1,26 @@
 package pl.sztukakodu.bookaro.catalog.domain;
 
+import lombok.*;
+
+import java.math.BigDecimal;
 import java.util.StringJoiner;
 
+@ToString
+@RequiredArgsConstructor
+@Getter
+@Setter
 public class Book {
-    Long id;
-    String title;
-    String author;
-    int year;
+    private Long id;
+    private String title;
+    private String author;
+    private Integer year;
+    private BigDecimal price;
 
-    public Book(Long id, String title, String author, int year) {
-        this.id = id;
+
+    public Book(String title, String author, Integer year, BigDecimal price) {
         this.title = title;
         this.author = author;
         this.year = year;
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", Book.class.getSimpleName() + "[", "]")
-                .add("id=" + id)
-                .add("title='" + title + "'")
-                .add("author='" + author + "'")
-                .add("year=" + year)
-                .toString();
+        this.price = price;
     }
 }
