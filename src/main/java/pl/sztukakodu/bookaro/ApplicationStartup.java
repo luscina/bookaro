@@ -62,24 +62,23 @@ public class ApplicationStartup implements CommandLineRunner {
 
     private void searchCatalog() {
         findByTitle();
-        findAndUpdate();
+//        findAndUpdate();
         findByTitle();
     }
 
-    private void findAndUpdate() {
-        System.out.println("Updating book...");
-        catalog.findOneByTitleAndAuthor("Sezon", "Andrzej")
-                .ifPresent(book -> {
-                    UpdateBookCommand command = UpdateBookCommand
-                            .builder()
-                            .id(book.getId())
-                            .title("Sezon burz czyli Ostatni zajazd na Litwie")
-                            .build();
-                    CatalogUseCase.UpdateBookResponse response = catalog.updateBook(command);
-                    System.out.println("Updating book result = " + response.isSuccess());
-                });
-
-    }
+//    private void findAndUpdate() {
+//        System.out.println("Updating book...");
+//        catalog.findByTitleAndAuthor("Sezon", "Andrzej")
+//                .stream().filter(book -> {
+//                    UpdateBookCommand command = UpdateBookCommand
+//                            .builder()
+//                            .id(book.getId())
+//                            .title("Sezon burz czyli Ostatni zajazd na Litwie")
+//                            .build();
+//                    CatalogUseCase.UpdateBookResponse response = catalog.updateBook(command);
+//                    System.out.println("Updating book result = " + response.isSuccess());
+//                });
+//    }
 
     private void initData() {
         catalog.addBook(new CreateBookCommand("Harry Potter i Komnata Tajemnic", "JK Rowlings", 1988, BigDecimal.valueOf(19.99)));

@@ -21,13 +21,16 @@ public interface CatalogUseCase {
 
     List<Book> findAll();
 
-    Optional<Book> findOneByTitleAndAuthor(String author, String title);
+    List<Book> findByTitleAndAuthor(String author, String title);
 
     void addBook(CreateBookCommand command);
 
     void removeById(Long id);
 
     UpdateBookResponse updateBook(UpdateBookCommand command);
+
+    Optional<Book> findById(Long id);
+
     @Value
     class CreateBookCommand {
         String title;
