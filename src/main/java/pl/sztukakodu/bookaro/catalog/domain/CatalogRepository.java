@@ -1,12 +1,11 @@
 package pl.sztukakodu.bookaro.catalog.domain;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 public interface CatalogRepository {
     List<Book> listAll();
-    void save(Book book);
+    Book save(Book book);
 
     Optional<Book> findById(Long id);
 

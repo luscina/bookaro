@@ -1,14 +1,12 @@
 package pl.sztukakodu.bookaro.catalog.application;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase;
 import pl.sztukakodu.bookaro.catalog.domain.Book;
 import pl.sztukakodu.bookaro.catalog.domain.CatalogRepository;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,9 +54,9 @@ class CatalogService implements CatalogUseCase {
     }
 
     @Override
-    public void addBook(CreateBookCommand command){
+    public Book addBook(CreateBookCommand command){
         Book book = command.toBook();
-        repository.save(book);
+        return repository.save(book);
     }
 
     @Override

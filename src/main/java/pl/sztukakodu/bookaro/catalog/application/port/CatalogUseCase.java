@@ -6,8 +6,6 @@ import lombok.Value;
 import pl.sztukakodu.bookaro.catalog.domain.Book;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +21,7 @@ public interface CatalogUseCase {
 
     List<Book> findByTitleAndAuthor(String author, String title);
 
-    void addBook(CreateBookCommand command);
+    Book addBook(CreateBookCommand command);
 
     void removeById(Long id);
 
