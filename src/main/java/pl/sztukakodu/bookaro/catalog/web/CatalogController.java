@@ -1,9 +1,5 @@
 package pl.sztukakodu.bookaro.catalog.web;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
@@ -16,6 +12,10 @@ import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase.CreateBookCommand;
 import pl.sztukakodu.bookaro.catalog.domain.Book;
 
+import javax.validation.Valid;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.*;
