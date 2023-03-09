@@ -5,15 +5,20 @@ import org.springframework.stereotype.Service;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase;
 import pl.sztukakodu.bookaro.catalog.domain.Book;
 import pl.sztukakodu.bookaro.catalog.domain.CatalogRepository;
+import pl.sztukakodu.bookaro.uploads.application.port.UploadUseCase;
+import pl.sztukakodu.bookaro.uploads.domain.Upload;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static pl.sztukakodu.bookaro.uploads.application.port.UploadUseCase.*;
 
 @Service
 @RequiredArgsConstructor
 class CatalogService implements CatalogUseCase {
 
     private final CatalogRepository repository;
+    private final UploadUseCase upload;
 
     @Override
     public List<Book> findByTitle(String title){
@@ -81,8 +86,10 @@ class CatalogService implements CatalogUseCase {
         System.out.println("Recived file name" + command.getFilename() + "bytes: " + command.getFile().length);
         repository.findById(command.getId())
                 .ifPresent(book -> {
-                    //book.setCoverId(book.getCoverId()
-                        });
+                    Upload savedUpload = upload.save(new SaveUploadCommand(command.getFilename(), command.getFile(), command.getContentType()));
+                    book.setCoverId(savedUpload.getId());
+                    repository.save(book);
+                });
 
     }
 
