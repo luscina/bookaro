@@ -77,6 +77,16 @@ class CatalogService implements CatalogUseCase {
     }
 
     @Override
+    public void updateBookCover(UpdateBookCoverCommand command) {
+        System.out.println("Recived file name" + command.getFilename() + "bytes: " + command.getFile().length);
+        repository.findById(command.getId())
+                .ifPresent(book -> {
+                    //book.setCoverId(book.getCoverId()
+                        });
+
+    }
+
+    @Override
     public Optional<Book> findById(Long id) {
         return repository.findById(id);
     }
