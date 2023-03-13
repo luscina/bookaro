@@ -5,13 +5,16 @@ import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.sztukakodu.bookaro.order.application.port.ManipulateOrderUseCase;
 import pl.sztukakodu.bookaro.order.application.port.QueryOrderUseCase;
 import pl.sztukakodu.bookaro.order.domain.Order;
 import pl.sztukakodu.bookaro.order.domain.OrderItem;
+import pl.sztukakodu.bookaro.order.domain.OrderStatus;
 import pl.sztukakodu.bookaro.order.domain.Recipient;
 import pl.sztukakodu.bookaro.web.CreatedURI;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.List;
@@ -58,6 +61,14 @@ public class OrderController {
                 );
     }
 
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void updateBook(@PathVariable Long id, @RequestBody UpdateStatusCommand command){
+        OrderStatus status = OrderStatus
+                .parseString(command.status)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown status: " + command.status));
+    }
+
     URI orderUri(Long orderId) {
         return new CreatedURI("/" + orderId).uri();
     }
@@ -92,5 +103,10 @@ public class OrderController {
         Recipient toRecipient() {
             return new Recipient(name, phone, street, city, zipCode, email);
         }
+    }
+
+    @Data
+    static class UpdateStatusCommand {
+        String status;
     }
 }

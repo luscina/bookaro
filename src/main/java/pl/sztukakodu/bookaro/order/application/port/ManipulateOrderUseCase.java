@@ -6,6 +6,7 @@ import lombok.Singular;
 import lombok.Value;
 import pl.sztukakodu.bookaro.commons.Either;
 import pl.sztukakodu.bookaro.order.domain.OrderItem;
+import pl.sztukakodu.bookaro.order.domain.OrderStatus;
 import pl.sztukakodu.bookaro.order.domain.Recipient;
 
 import java.util.Arrays;
@@ -15,6 +16,7 @@ import static java.util.Collections.emptyList;
 
 public interface ManipulateOrderUseCase {
     PlaceOrderResponse placeOrder(PlaceOrderCommand command);
+    void updateOrderStatus(Long id, OrderStatus status);
     @Builder
     @Value
     @AllArgsConstructor
@@ -32,6 +34,7 @@ public interface ManipulateOrderUseCase {
         public static PlaceOrderResponse success(Long orderId) {
             return new PlaceOrderResponse(true, null, orderId);
         }
+
         public static PlaceOrderResponse failure(String error) {
             return new PlaceOrderResponse(false, error, null);
         }
