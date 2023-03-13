@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,7 +46,7 @@ public class CatalogController {
         return catalog.findAll();
     }
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id){
+    public ResponseEntity<?> getById(@PathVariable Long id) {
         return catalog
             .findById(id)
             .map(ResponseEntity::ok)
@@ -64,13 +65,11 @@ public class CatalogController {
         catalog.updateBook(command.toUpdateCommand(id));
     }
 
-
-
     private static URI getUri(Book book) {
         return ServletUriComponentsBuilder.fromCurrentRequestUri().path("/" + book.getId().toString()).build().toUri();
     }
 
-    @PutMapping("/{id}/cover")
+    @PutMapping(value = "/{id}/cover", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void addBookCover(@PathVariable Long id, @RequestParam("file")MultipartFile file) throws IOException {
         System.out.println("Got file name: " + file.getOriginalFilename());
