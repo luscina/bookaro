@@ -32,4 +32,9 @@ public class UploadService implements UploadUseCase {
     public Optional<Upload> getById(String id) {
         return Optional.of(storage.get(id));
     }
+
+    @Override
+    public void removeById(String id) {
+        storage.remove(id);
+    }
 }
