@@ -17,6 +17,8 @@ import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase.CreateBookC
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase.UpdateBookCommand;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase.UpdateBookCoverCommand;
 import pl.sztukakodu.bookaro.catalog.domain.Book;
+import pl.sztukakodu.bookaro.web.CreatedURI;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -25,7 +27,6 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/catalog")
-
 @AllArgsConstructor
 public class CatalogController {
     private final CatalogUseCase catalog;
@@ -66,7 +67,7 @@ public class CatalogController {
     }
 
     private static URI getUri(Book book) {
-        return ServletUriComponentsBuilder.fromCurrentRequestUri().path("/" + book.getId().toString()).build().toUri();
+        return new CreatedURI("/" + book.getId().toString()).uri();
     }
 
     @PutMapping(value = "/{id}/cover", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})

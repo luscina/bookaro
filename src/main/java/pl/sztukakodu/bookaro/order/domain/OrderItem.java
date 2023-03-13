@@ -5,6 +5,7 @@ import pl.sztukakodu.bookaro.catalog.domain.Book;
 
 @Value
 public class OrderItem {
-    Book book;
-    Integer quantity;
+    Long bookId;
+    int quantity;
+
 }

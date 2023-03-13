@@ -1,11 +1,14 @@
-package pl.sztukakodu.bookaro.order.domain;
+package pl.sztukakodu.bookaro.order.infrastructure;
 
 import org.springframework.stereotype.Repository;
+import pl.sztukakodu.bookaro.order.domain.Order;
+import pl.sztukakodu.bookaro.order.domain.OrderRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -31,6 +34,17 @@ public class MemoryOrderRepository implements OrderRepository {
     public List<Order> findAll() {
         return new ArrayList<>(storage.values());
     }
+
+    @Override
+    public Optional<Order> findById(Long id) {
+        return Optional.of(storage.get(id));
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        storage.remove(id);
+    }
+
     private long nextId() {
         return NEXT_ID.getAndIncrement();
     }

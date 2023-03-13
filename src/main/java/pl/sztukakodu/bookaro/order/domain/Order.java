@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import pl.sztukakodu.bookaro.catalog.domain.CatalogRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.List;
 @Data
 @Builder
 public class Order {
+    private final CatalogRepository repository;
     private Long id;
     private List<OrderItem> items;
     private Recipient recipient;
@@ -19,9 +21,4 @@ public class Order {
     private OrderStatus status = OrderStatus.NEW;
     private LocalDateTime createdAt;
 
-    public BigDecimal totalPrice(){
-        return items.stream()
-                .map(item -> item.getBook().getPrice().multiply(new BigDecimal(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
 }
