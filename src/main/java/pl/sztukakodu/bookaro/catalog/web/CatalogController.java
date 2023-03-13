@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -17,12 +16,11 @@ import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase.CreateBookC
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase.UpdateBookCommand;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase.UpdateBookCoverCommand;
 import pl.sztukakodu.bookaro.catalog.domain.Book;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/catalog")
@@ -66,20 +64,7 @@ public class CatalogController {
         catalog.updateBook(command.toUpdateCommand(id));
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleException(MethodArgumentNotValidException exception) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-        body.put("timestamp", new Date());
-        body.put("status", status.value());
-        List<String> errors = exception.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(x -> x.getField() + "-" + x.getDefaultMessage())
-                .collect(Collectors.toList());
-        body.put("errors", errors);
-        return new ResponseEntity<>(body, status);
-    }
+
 
     private static URI getUri(Book book) {
         return ServletUriComponentsBuilder.fromCurrentRequestUri().path("/" + book.getId().toString()).build().toUri();
