@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,7 +25,9 @@ public class Order {
     private List<OrderItem> items;
     private transient Recipient recipient;
     @Builder.Default
+    @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.NEW;
+    @CreatedDate
     private LocalDateTime createdAt;
 
 }
