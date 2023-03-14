@@ -32,13 +32,13 @@ public class OrderController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<RichOrder> getOrders(){
+    public List<RichOrder> getOrders() {
         return queryOrder.findAll();
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<RichOrder> getById(@PathVariable Long id){
+    public ResponseEntity<RichOrder> getById(@PathVariable Long id) {
         return queryOrder.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -46,13 +46,13 @@ public class OrderController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable Long id){
+    public void deleteById(@PathVariable Long id) {
         queryOrder.deleteById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> addOrder(@RequestBody CreateOrderCommand command){
+    public ResponseEntity<?> addOrder(@RequestBody CreateOrderCommand command) {
         return manipulateOrder
                 .placeOrder(command.toPlaceCommand())
                 .handle(
@@ -63,7 +63,7 @@ public class OrderController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void updateBook(@PathVariable Long id, @RequestBody UpdateStatusCommand command){
+    public void updateBook(@PathVariable Long id, @RequestBody UpdateStatusCommand command) {
         OrderStatus status = OrderStatus
                 .parseString(command.status)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown status: " + command.status));
