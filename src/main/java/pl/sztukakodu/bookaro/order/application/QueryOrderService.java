@@ -2,12 +2,12 @@ package pl.sztukakodu.bookaro.order.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pl.sztukakodu.bookaro.catalog.db.BookJpaRepository;
 import pl.sztukakodu.bookaro.order.application.port.QueryOrderUseCase;
+import pl.sztukakodu.bookaro.order.db.OrderJpaRepository;
 import pl.sztukakodu.bookaro.order.domain.Order;
-import pl.sztukakodu.bookaro.order.domain.OrderRepository;
 import pl.sztukakodu.bookaro.order.domain.OrderItem;
 import pl.sztukakodu.bookaro.catalog.domain.Book;
-import pl.sztukakodu.bookaro.catalog.domain.CatalogRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class QueryOrderService implements QueryOrderUseCase {
-    private final OrderRepository repository;
-    private final CatalogRepository catalogRepository;
+    private final OrderJpaRepository repository;
+    private final BookJpaRepository catalogRepository;
     @Override
     public List<RichOrder> findAll() {
         return repository.findAll()
@@ -57,6 +57,4 @@ public class QueryOrderService implements QueryOrderUseCase {
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
-
-
 }

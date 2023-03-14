@@ -1,15 +1,20 @@
 package pl.sztukakodu.bookaro.catalog.domain;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
-
 import java.math.BigDecimal;
-import java.util.StringJoiner;
 
 @ToString
 @RequiredArgsConstructor
 @Getter
 @Setter
+@Entity
 public class Book {
+    @Id
+    @GeneratedValue
     private Long id;
     private String title;
     private String author;

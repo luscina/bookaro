@@ -3,8 +3,8 @@ package pl.sztukakodu.bookaro.catalog.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase;
+import pl.sztukakodu.bookaro.catalog.db.BookJpaRepository;
 import pl.sztukakodu.bookaro.catalog.domain.Book;
-import pl.sztukakodu.bookaro.catalog.domain.CatalogRepository;
 import pl.sztukakodu.bookaro.uploads.application.port.UploadUseCase;
 import pl.sztukakodu.bookaro.uploads.domain.Upload;
 
@@ -17,12 +17,12 @@ import static pl.sztukakodu.bookaro.uploads.application.port.UploadUseCase.*;
 @RequiredArgsConstructor
 class CatalogService implements CatalogUseCase {
 
-    private final CatalogRepository repository;
+    private final BookJpaRepository repository;
     private final UploadUseCase upload;
 
     @Override
     public List<Book> findByTitle(String title){
-        return repository.listAll()
+        return repository.findAll()
                 .stream()
                 .filter(book -> book.getTitle().toLowerCase().contains(title.toLowerCase()))
                 .collect(Collectors.toList());
@@ -30,7 +30,7 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public Optional<Book> findOneByTitle(String title) {
-        return repository.listAll()
+        return repository.findAll()
                 .stream()
                 .filter(book -> book.getTitle().contains(title))
                 .findFirst();
@@ -38,7 +38,7 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public List<Book> findByAuthor(String author){
-        return repository.listAll()
+        return repository.findAll()
                 .stream()
                 .filter(book -> book.getAuthor().toLowerCase().contains(author.toLowerCase()))
                 .collect(Collectors.toList());
@@ -47,11 +47,11 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public List<Book> findAll(){
-        return repository.listAll();
+        return repository.findAll();
     }
     @Override
     public List<Book> findByTitleAndAuthor(String title, String author){
-        return repository.listAll()
+        return repository.findAll()
                 .stream()
                 .filter(book -> book.getAuthor().toLowerCase().contains(author.toLowerCase()))
                 .filter(book -> book.getTitle().toLowerCase().contains(title.toLowerCase()))
@@ -66,7 +66,7 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public void removeById(Long id){
-        repository.removeById(id);
+        repository.deleteById(id);
     }
 
     @Override

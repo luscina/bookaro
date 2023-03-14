@@ -1,22 +1,27 @@
 package pl.sztukakodu.bookaro.order.domain;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import pl.sztukakodu.bookaro.catalog.domain.CatalogRepository;
-
-import java.math.BigDecimal;
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Builder
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "orders")
 public class Order {
-    private final CatalogRepository repository;
+    @Id
+    @GeneratedValue
     private Long id;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id")
     private List<OrderItem> items;
-    private Recipient recipient;
+    private transient Recipient recipient;
     @Builder.Default
     private OrderStatus status = OrderStatus.NEW;
     private LocalDateTime createdAt;
