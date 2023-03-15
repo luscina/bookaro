@@ -2,13 +2,14 @@ package pl.sztukakodu.bookaro.catalog.application.port;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import pl.sztukakodu.bookaro.catalog.domain.Author;
 import pl.sztukakodu.bookaro.catalog.domain.Book;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Collections.emptyList;
 
@@ -19,8 +20,6 @@ public interface CatalogUseCase {
     List<Book> findByAuthor(String author);
 
     List<Book> findAll();
-
-    List<Book> findByTitleAndAuthor(String author, String title);
 
     Book addBook(CreateBookCommand command);
 
@@ -34,6 +33,7 @@ public interface CatalogUseCase {
 
     void removeBookCover(Long id);
 
+
     @Value
     class UpdateBookCoverCommand{
         Long id;
@@ -45,13 +45,9 @@ public interface CatalogUseCase {
     @Value
     class CreateBookCommand {
         String title;
-        String author;
+        Set<Long> authors;
         Integer year;
         BigDecimal price;
-
-        public Book toBook(){
-            return new Book(title, author, year, price);
-        }
     }
     @Value
     @Builder
@@ -59,26 +55,9 @@ public interface CatalogUseCase {
     class UpdateBookCommand {
         Long id;
         String title;
-        String author;
+        Set<Long> authors;
         Integer year;
         BigDecimal price;
-
-
-        public Book updateFields(Book book){
-            if(title != null){
-                book.setTitle(title);
-            }
-            if(author != null){
-                book.setAuthor(author);
-            }
-            if(year != null){
-                book.setYear(year);
-            }
-            if(price != null){
-                book.setPrice(price);
-            }
-            return book;
-        }
     }
     @Value
     class UpdateBookResponse{

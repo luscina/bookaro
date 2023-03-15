@@ -6,15 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.sztukakodu.bookaro.order.application.port.ManipulateOrderUseCase;
 import pl.sztukakodu.bookaro.order.application.port.QueryOrderUseCase;
-import pl.sztukakodu.bookaro.order.domain.Order;
 import pl.sztukakodu.bookaro.order.domain.OrderItem;
 import pl.sztukakodu.bookaro.order.domain.OrderStatus;
 import pl.sztukakodu.bookaro.order.domain.Recipient;
 import pl.sztukakodu.bookaro.web.CreatedURI;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.List;

@@ -11,11 +11,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import pl.sztukakodu.bookaro.catalog.application.port.AuthorsUseCase;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase.CreateBookCommand;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase.UpdateBookCommand;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase.UpdateBookCoverCommand;
+import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase.UpdateBookResponse;
+import pl.sztukakodu.bookaro.catalog.domain.Author;
 import pl.sztukakodu.bookaro.catalog.domain.Book;
 import pl.sztukakodu.bookaro.web.CreatedURI;
 
@@ -30,6 +34,7 @@ import java.util.*;
 @AllArgsConstructor
 public class CatalogController {
     private final CatalogUseCase catalog;
+    private final AuthorsUseCase authorsUseCase;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -37,9 +42,7 @@ public class CatalogController {
             @RequestParam Optional<String> title,
             @RequestParam Optional<String> author
             ){
-        if (author.isPresent() && title.isPresent()) {
-            return catalog.findByTitleAndAuthor(title.get(), author.get());
-        } else if(title.isPresent()) {
+        if (title.isPresent()) {
             return catalog.findByTitle(title.get());
         } else if(author.isPresent()) {
             return catalog.findByAuthor(author.get());
@@ -62,8 +65,12 @@ public class CatalogController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void updateBook(@PathVariable Long id, @Valid @RequestBody RestBookCommand command) {
-        catalog.updateBook(command.toUpdateCommand(id));
+    public void updateBook(@PathVariable Long id, @RequestBody RestBookCommand command) {
+        UpdateBookResponse response = catalog.updateBook(command.toUpdateCommand(id));
+        if(!response.isSuccess()){
+            String message = String.join(", ", response.getError());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
+        }
     }
 
     private static URI getUri(Book book) {
@@ -94,7 +101,7 @@ public class CatalogController {
         private String title;
 
         @NotBlank
-        private String author;
+        private Set<Long> authors;
 
         @NotNull
         private Integer year;
@@ -104,10 +111,10 @@ public class CatalogController {
         private BigDecimal price;
 
         CreateBookCommand toCommand() {
-            return new CreateBookCommand(title, author, year, price);
+            return new CreateBookCommand(title, authors, year, price);
         }
         UpdateBookCommand toUpdateCommand(Long id) {
-            return new UpdateBookCommand(id, title, author, year, price);
+            return new UpdateBookCommand(id, title, authors, year, price);
         }
     }
     @DeleteMapping
