@@ -61,6 +61,7 @@ class CatalogService implements CatalogUseCase {
         return book;
     }
 
+    @Transactional
     private static void updateBook(Book book, Set<Author> authors) {
         book.removeAuthors();
         authors.forEach(book::addAuthor);
@@ -82,12 +83,12 @@ class CatalogService implements CatalogUseCase {
     }
 
     @Override
+    @Transactional
     public UpdateBookResponse updateBook(UpdateBookCommand command) {
         return bookJpaRepository
                 .findById(command.getId())
                 .map(book -> {
-                    Book updatedBook = updateFields(command, book);
-                    bookJpaRepository.save(updatedBook);
+                    updateFields(command, book);
                     return UpdateBookResponse.SUCCESS;
                 })
                 .orElseGet(() -> new UpdateBookResponse(false, Arrays.asList("Book not found with id: " + command.getId())));
