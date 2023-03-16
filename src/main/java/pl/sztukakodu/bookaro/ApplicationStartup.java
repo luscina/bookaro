@@ -35,8 +35,8 @@ public class ApplicationStartup implements CommandLineRunner {
     }
 
     private void placeOrder() {
-        Book effective = catalog.findOneByTitle("Efficient").orElseThrow(() -> new IllegalStateException("Cannot find book"));
-        Book puzzler = catalog.findOneByTitle("Puzzlers").orElseThrow(() -> new IllegalStateException("Cannot find book"));
+        Book efficientJava = catalog.findOneByTitle("Efficient").orElseThrow(() -> new IllegalStateException("Cannot find book"));
+        Book puzzler = catalog.findOneByTitle("Java").orElseThrow(() -> new IllegalStateException("Cannot find book"));
         Recipient recipient = Recipient
                 .builder()
                 .name("Jan Kowalski")
@@ -49,7 +49,7 @@ public class ApplicationStartup implements CommandLineRunner {
         PlaceOrderCommand command = PlaceOrderCommand
                 .builder()
                 .recipient(recipient)
-                .item(new OrderItem(effective.getId(), 16))
+                .item(new OrderItem(efficientJava.getId(), 16))
                 .item(new OrderItem(puzzler.getId(), 7))
                 .build();
 
@@ -68,7 +68,7 @@ public class ApplicationStartup implements CommandLineRunner {
         Author neal = new Author("Neal", "Gafter");
         authorRepository.save(joshuaBlock);
         authorRepository.save(neal);
-        CreateBookCommand effictvieJava = new CreateBookCommand(
+        CreateBookCommand efficientJava = new CreateBookCommand(
                 "Efficient Java",
                 Set.of(joshuaBlock.getId()),
                 2006,
@@ -80,7 +80,7 @@ public class ApplicationStartup implements CommandLineRunner {
                 2018,
                 new BigDecimal("99.00")
         );
-        catalog.addBook(effictvieJava);
+        catalog.addBook(efficientJava);
         catalog.addBook(javaPuzzlers);
     }
 }

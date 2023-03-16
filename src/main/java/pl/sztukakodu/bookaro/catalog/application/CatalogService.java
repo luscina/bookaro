@@ -1,5 +1,6 @@
 package pl.sztukakodu.bookaro.catalog.application;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.sztukakodu.bookaro.catalog.application.port.AuthorsUseCase;
@@ -43,10 +44,11 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public List<Book> findAll() {
-        return bookJpaRepository.findAll();
+        return bookJpaRepository.findAllEager();
     }
 
     @Override
+    @Transactional
     public Book addBook(CreateBookCommand command) {
         Book book = toBook(command);
         return bookJpaRepository.save(book);
@@ -55,8 +57,13 @@ class CatalogService implements CatalogUseCase {
     private Book toBook(CreateBookCommand command) {
         Book book = new Book(command.getTitle(), command.getYear(), command.getPrice());
         Set<Author> authors = fetchAuthorsByIds(command.getAuthors());
-        book.setAuthors(authors);
+        updateBook(book, authors);
         return book;
+    }
+
+    private static void updateBook(Book book, Set<Author> authors) {
+        book.removeAuthors();
+        authors.forEach(book::addAuthor);
     }
 
     private Set<Author> fetchAuthorsByIds(Set<Long> authors) {
@@ -91,7 +98,7 @@ class CatalogService implements CatalogUseCase {
             book.setTitle(command.getTitle());
         }
         if(command.getAuthors() != null && command.getAuthors().size() > 0){
-            book.setAuthors(fetchAuthorsByIds(command.getAuthors()));
+            updateBook(book, fetchAuthorsByIds(command.getAuthors()));
         }
         if(command.getYear() != null){
             book.setYear(command.getYear());

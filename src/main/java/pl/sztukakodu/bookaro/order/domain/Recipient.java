@@ -4,20 +4,15 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import pl.sztukakodu.bookaro.jpa.BaseEntity;
 
-@Data
+@Getter
+@Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Recipient {
-    @Id
-    @GeneratedValue
-    Long id;
+public class Recipient extends BaseEntity {
     String name;
     String phone;
     String street;

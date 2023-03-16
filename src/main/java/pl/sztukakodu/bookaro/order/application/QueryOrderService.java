@@ -1,5 +1,6 @@
 package pl.sztukakodu.bookaro.order.application;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.sztukakodu.bookaro.catalog.db.BookJpaRepository;
@@ -19,6 +20,7 @@ public class QueryOrderService implements QueryOrderUseCase {
     private final OrderJpaRepository repository;
     private final BookJpaRepository catalogRepository;
     @Override
+    @Transactional
     public List<RichOrder> findAll() {
         return repository.findAll()
                 .stream()

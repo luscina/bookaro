@@ -8,9 +8,12 @@ import pl.sztukakodu.bookaro.catalog.domain.Book;
 import java.util.List;
 
 public interface BookJpaRepository extends JpaRepository<Book, Long> {
+    @Query("SELECT b FROM Book b JOIN FETCH b.authors")
+    List<Book> findAllEager();
+
     List<Book> findByAuthors_firstNameContainsIgnoreCaseOrAuthors_lastNameContainsIgnoreCase(String firstName, String lastName);
 
     List<Book> findByTitleStartingWithIgnoreCase(String title);
-    @Query("SELECT * FROM Book b JOIN Author a WHERE a.firstName LIKE :name or a.lastName LIKE :name")
-    List<Book> findByAuthor(@Param("name") String name);
+   // @Query("SELECT * FROM Book b JOIN Author a WHERE a.firstName LIKE :name or a.lastName LIKE :name")
+  //  List<Book> findByAuthor(@Param("name") String name);
 }
