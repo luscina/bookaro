@@ -24,7 +24,7 @@ public class CustomGlobalExceptionHandler {
                 .collect(Collectors.toList());
          return handleException(HttpStatus.BAD_REQUEST, errors);
     }
-    @ExceptionHandler(IllegalStateException.class)
+    @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex){
         return handleException(HttpStatus.BAD_REQUEST, List.of(ex.getMessage()));
     }
