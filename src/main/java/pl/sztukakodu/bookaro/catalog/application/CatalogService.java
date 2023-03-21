@@ -39,7 +39,7 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public List<Book> findByAuthor(String author) {
-        return bookJpaRepository.findByAuthors_firstNameContainsIgnoreCaseOrAuthors_lastNameContainsIgnoreCase(author, author);
+        return bookJpaRepository.findByAuthors_nameContainsIgnoreCase(author);
     }
 
     @Override
@@ -55,7 +55,7 @@ class CatalogService implements CatalogUseCase {
     }
 
     private Book toBook(CreateBookCommand command) {
-        Book book = new Book(command.getTitle(), command.getYear(), command.getPrice());
+        Book book = new Book(command.getTitle(), command.getYear(), command.getPrice(), command.getAvailable());
         Set<Author> authors = fetchAuthorsByIds(command.getAuthors());
         updateBook(book, authors);
         return book;

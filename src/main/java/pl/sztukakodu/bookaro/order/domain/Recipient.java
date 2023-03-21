@@ -13,12 +13,13 @@ import pl.sztukakodu.bookaro.jpa.BaseEntity;
 @NoArgsConstructor
 @Entity
 public class Recipient extends BaseEntity {
+
+    String email;
     String name;
     String phone;
     String street;
     String city;
     String zipCode;
-    String email;
 
     public Recipient(String name, String phone, String street, String city, String zipCode, String email) {
         this.name = name;

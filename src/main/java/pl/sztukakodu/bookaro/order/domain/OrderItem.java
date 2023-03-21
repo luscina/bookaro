@@ -1,9 +1,8 @@
 package pl.sztukakodu.bookaro.order.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+import pl.sztukakodu.bookaro.catalog.domain.Book;
 import pl.sztukakodu.bookaro.jpa.BaseEntity;
 
 
@@ -13,7 +12,9 @@ import pl.sztukakodu.bookaro.jpa.BaseEntity;
 @Getter
 @Setter
 public class OrderItem extends BaseEntity {
-    private Long bookId;
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
     private int quantity;
 
 }

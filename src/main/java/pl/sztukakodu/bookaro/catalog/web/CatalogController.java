@@ -1,9 +1,7 @@
 package pl.sztukakodu.bookaro.catalog.web;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
@@ -12,14 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.sztukakodu.bookaro.catalog.application.port.AuthorsUseCase;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase.CreateBookCommand;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase.UpdateBookCommand;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase.UpdateBookCoverCommand;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase.UpdateBookResponse;
-import pl.sztukakodu.bookaro.catalog.domain.Author;
 import pl.sztukakodu.bookaro.catalog.domain.Book;
 import pl.sztukakodu.bookaro.web.CreatedURI;
 
@@ -38,7 +34,7 @@ public class CatalogController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Book> getAllFiltrated(
+    public List<Book> getAll(
             @RequestParam Optional<String> title,
             @RequestParam Optional<String> author
             ){
@@ -100,18 +96,20 @@ public class CatalogController {
         @NotBlank
         private String title;
 
-        @NotBlank
         private Set<Long> authors;
 
         @NotNull
         private Integer year;
+        @NotNull
+        @PositiveOrZero
+        private Long available;
 
         @NotNull
         @DecimalMin("0.00")
         private BigDecimal price;
 
         CreateBookCommand toCommand() {
-            return new CreateBookCommand(title, authors, year, price);
+            return new CreateBookCommand(title, authors, year, price, available);
         }
         UpdateBookCommand toUpdateCommand(Long id) {
             return new UpdateBookCommand(id, title, authors, year, price);

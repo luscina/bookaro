@@ -22,10 +22,12 @@ import java.util.UUID;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Book extends BaseEntity {
+    @Column(unique = true)
     private String title;
     private Integer year;
     private BigDecimal price;
     private Long coverId;
+    private Long available;
     @CreatedDate
     private LocalDateTime createdAt;
     @LastModifiedDate
@@ -35,10 +37,12 @@ public class Book extends BaseEntity {
     @JsonIgnoreProperties("books")
     private Set<Author> authors = new HashSet<>();
 
-    public Book(String title, Integer year, BigDecimal price) {
+
+    public Book(String title, Integer year, BigDecimal price, Long available) {
         this.title = title;
         this.year = year;
         this.price = price;
+        this.available = available;
     }
 
     public void addAuthor(Author author){

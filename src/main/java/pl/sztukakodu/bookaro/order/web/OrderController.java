@@ -6,19 +6,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import pl.sztukakodu.bookaro.order.application.RichOrder;
 import pl.sztukakodu.bookaro.order.application.port.ManipulateOrderUseCase;
 import pl.sztukakodu.bookaro.order.application.port.QueryOrderUseCase;
-import pl.sztukakodu.bookaro.order.domain.OrderItem;
 import pl.sztukakodu.bookaro.order.domain.OrderStatus;
-import pl.sztukakodu.bookaro.order.domain.Recipient;
 import pl.sztukakodu.bookaro.web.CreatedURI;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static pl.sztukakodu.bookaro.order.application.port.ManipulateOrderUseCase.*;
-import static pl.sztukakodu.bookaro.order.application.port.QueryOrderUseCase.*;
 
 @RestController
 @RequestMapping("orders")
@@ -49,16 +46,16 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> addOrder(@RequestBody CreateOrderCommand command) {
+    public ResponseEntity<?> addOrder(@RequestBody PlaceOrderCommand command) {
         return manipulateOrder
-                .placeOrder(command.toPlaceCommand())
+                .placeOrder(command)
                 .handle(
                     orderId -> ResponseEntity.created(orderUri(orderId)).build(),
                     error -> ResponseEntity.badRequest().body(error)
                 );
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/status")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void updateOrderStatus(@PathVariable Long id, @RequestBody UpdateStatusCommand command) {
         OrderStatus status = OrderStatus
@@ -69,38 +66,6 @@ public class OrderController {
 
     URI orderUri(Long orderId) {
         return new CreatedURI("/" + orderId).uri();
-    }
-    @Data
-    private class CreateOrderCommand {
-        private List<OrderItemCommand> items;
-        private RecipientCommand recipient;
-
-        PlaceOrderCommand toPlaceCommand(){
-            List<OrderItem> orderItems = items
-                    .stream()
-                    .map(item -> new OrderItem(item.bookId, item.quantity))
-                    .collect(Collectors.toList());
-            return new PlaceOrderCommand(orderItems, recipient.toRecipient());
-        }
-    }
-
-    @Data
-    private class OrderItemCommand {
-        Long bookId;
-        int quantity;
-    }
-
-    @Data
-    private class RecipientCommand {
-        String name;
-        String phone;
-        String street;
-        String city;
-        String zipCode;
-        String email;
-        Recipient toRecipient() {
-            return new Recipient(name, phone, street, city, zipCode, email);
-        }
     }
 
     @Data

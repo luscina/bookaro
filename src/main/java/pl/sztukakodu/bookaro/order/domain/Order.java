@@ -6,9 +6,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pl.sztukakodu.bookaro.jpa.BaseEntity;
-
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,9 +18,9 @@ import java.util.List;
 @Table(name = "orders")
 @EntityListeners(AuditingEntityListener.class)
 public class Order extends BaseEntity {
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")
-    private List<OrderItem> items;
+    private Set<OrderItem> items;
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Recipient recipient;
     @Builder.Default
@@ -32,7 +31,9 @@ public class Order extends BaseEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public void updateStatus(OrderStatus newStatus) {
-        this.status = status.updateStatus(newStatus);
+    public UpdateStatusResult updateStatus(OrderStatus newStatus) {
+        UpdateStatusResult result = this.status.updateStatus(newStatus);
+        this.status = result.getStatus();
+        return result;
     }
 }
