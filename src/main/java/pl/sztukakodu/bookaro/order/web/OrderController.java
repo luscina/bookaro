@@ -14,6 +14,7 @@ import pl.sztukakodu.bookaro.web.CreatedURI;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 import static pl.sztukakodu.bookaro.order.application.port.ManipulateOrderUseCase.*;
 
@@ -57,19 +58,17 @@ public class OrderController {
 
     @PutMapping("/{id}/status")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void updateOrderStatus(@PathVariable Long id, @RequestBody UpdateStatusCommand command) {
-        OrderStatus status = OrderStatus
-                .parseString(command.status)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown status: " + command.status));
-        manipulateOrder.updateOrderStatus(id, status);
+    public void updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String status = body.get("status");
+        OrderStatus orderStatus = OrderStatus
+                .parseString(status)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown status: " + status));
+        UpdateStatusCommand updateStatusCommand = new UpdateStatusCommand(id, orderStatus, null);
+        manipulateOrder.updateOrderStatus(updateStatusCommand);
     }
 
     URI orderUri(Long orderId) {
         return new CreatedURI("/" + orderId).uri();
     }
 
-    @Data
-    static class UpdateStatusCommand {
-        String status;
-    }
 }

@@ -2,6 +2,7 @@ package pl.sztukakodu.bookaro.order.application;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pl.sztukakodu.bookaro.catalog.db.BookJpaRepository;
 import pl.sztukakodu.bookaro.catalog.domain.Book;
@@ -67,13 +68,23 @@ public class ManipulateOrderService implements ManipulateOrderUseCase {
     }
 
     @Override
-    public void updateOrderStatus(Long id, OrderStatus status) {
-        repository.findById(id)
-                .ifPresent(order -> {
-                    UpdateStatusResult updateStatusResult = order.updateStatus(status);
-                    bookJpaRepository.saveAll(revokeBooks(order.getItems()));
+    public UpdateStatusResponse updateOrderStatus(UpdateStatusCommand command) {
+        return repository.findById(command.getOrderId())
+                .map(order -> {
+                    if(!hasAccess(command, order)) {
+                        return UpdateStatusResponse.failure("Unauthorized");
+                    }
+                    if(hasAccess(command, order)) {
+                        bookJpaRepository.saveAll(revokeBooks(order.getItems()));
+                    }
                     repository.save(order);
-                });
+                    return UpdateStatusResponse.success(order.getStatus());
+                })
+                .orElse(UpdateStatusResponse.failure("Order not found"));
+    }
+
+    private static boolean hasAccess(UpdateStatusCommand command, Order order) {
+        return command.getEmail().equalsIgnoreCase(order.getRecipient().getEmail());
     }
 
     private Set<Book> revokeBooks(Set<OrderItem> items) {

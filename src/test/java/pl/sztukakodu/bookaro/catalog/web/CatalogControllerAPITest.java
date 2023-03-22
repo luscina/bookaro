@@ -48,5 +48,6 @@ class CatalogControllerAPITest {
         ResponseEntity<List<Book>> response = restTemplate.exchange(request, type);
 
         assertEquals(2, response.getBody().size());
+
     }
 }

@@ -2,18 +2,14 @@ package pl.sztukakodu.bookaro.order.application.port;
 
 import lombok.*;
 import pl.sztukakodu.bookaro.commons.Either;
-import pl.sztukakodu.bookaro.order.domain.OrderItem;
 import pl.sztukakodu.bookaro.order.domain.OrderStatus;
 import pl.sztukakodu.bookaro.order.domain.Recipient;
 
-import java.util.Arrays;
 import java.util.List;
-
-import static java.util.Collections.emptyList;
 
 public interface ManipulateOrderUseCase {
     PlaceOrderResponse placeOrder(PlaceOrderCommand command);
-    void updateOrderStatus(Long id, OrderStatus status);
+    UpdateStatusResponse updateOrderStatus(UpdateStatusCommand updateStatusCommand);
 
     void deleteOrderById(Long id);
     @Builder
@@ -43,5 +39,26 @@ public interface ManipulateOrderUseCase {
         public static PlaceOrderResponse failure(String error) {
             return new PlaceOrderResponse(false, error, null);
         }
+    }
+
+    class UpdateStatusResponse extends Either<String, OrderStatus> {
+        public UpdateStatusResponse(boolean success, String left, OrderStatus right){
+            super(success, left, right);
+        }
+
+        public static UpdateStatusResponse success(OrderStatus orderStatus) {
+            return new UpdateStatusResponse(true, null, orderStatus);
+        }
+
+        public static UpdateStatusResponse failure(String error) {
+            return new UpdateStatusResponse(false, error, null);
+        }
+    }
+
+    @Value
+    class UpdateStatusCommand{
+        Long orderId;
+        OrderStatus status;
+        String email;
     }
 }
