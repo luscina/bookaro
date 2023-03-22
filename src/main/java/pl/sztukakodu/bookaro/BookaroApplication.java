@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 import pl.sztukakodu.bookaro.order.application.port.OrderProperties;
 
-@EnableJpaAuditing
+
 @EnableScheduling
 @SpringBootApplication
 @EnableConfigurationProperties(OrderProperties.class)
