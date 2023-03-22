@@ -7,7 +7,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase;
 import pl.sztukakodu.bookaro.catalog.domain.Book;
 
@@ -31,9 +34,8 @@ class CatalogControllerWebTest {
         Book effective = new Book("Effective Java", 2005, new BigDecimal("19.99"), 50L);
         Mockito.when(catalogUseCase.findAll()).thenReturn(List.of(concurrency, effective));
         mockMvc.perform(MockMvcRequestBuilders.get("/catalog"))
-                .andDo(print());
-
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)));
     }
-
-
 }
