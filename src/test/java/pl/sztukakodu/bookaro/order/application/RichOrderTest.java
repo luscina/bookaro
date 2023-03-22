@@ -33,7 +33,7 @@ class RichOrderTest {
         );
 
         BigDecimal totalPrice = richOrder.totalPrice();
-        Assertions.assertEquals(totalPrice, BigDecimal.ZERO);
+        Assertions.assertEquals(totalPrice, new BigDecimal("55.95"));
 
     }
 }

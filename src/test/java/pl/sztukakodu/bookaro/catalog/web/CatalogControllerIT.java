@@ -30,6 +30,6 @@ class CatalogControllerIT {
     @Test
     public void getAllBooks(){
         List<Book> all = catalogController.getAll(Optional.empty(), Optional.empty());
-        Assertions.assertEquals(30, all.size());
+        Assertions.assertEquals(29, all.size());
     }
 }

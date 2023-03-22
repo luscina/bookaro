@@ -30,7 +30,6 @@ import java.util.*;
 @AllArgsConstructor
 public class CatalogController {
     private final CatalogUseCase catalog;
-    private final AuthorsUseCase authorsUseCase;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)

@@ -43,7 +43,7 @@ public class CatalogInitializerService implements CatalogInitializerUseCase {
     private final CatalogUseCase catalog;
     private final ManipulateOrderUseCase placeOrder;
     private final QueryOrderUseCase queryOrder;
-    private final AuthorJpaRepository authorRepository;
+    private final AuthorJpaRepository authorJpaRepository;
     private final RestTemplate restTemplate;
 
     @Override
@@ -54,15 +54,15 @@ public class CatalogInitializerService implements CatalogInitializerUseCase {
     }
 
     private void initData() {
-        ClassPathResource resource = new ClassPathResource("books.csv");
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(new ClassPathResource("books.csv").getInputStream()))){
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new ClassPathResource("books.csv").getInputStream()))) {
             CsvToBean<CsvBook> build = new CsvToBeanBuilder<CsvBook>(reader)
                     .withType(CsvBook.class)
                     .withIgnoreLeadingWhiteSpace(true)
                     .build();
+
             build.stream().forEach(this::initBook);
         } catch (IOException e) {
-            throw new IllegalStateException("Failed do parse CSV file", e);
+            throw new IllegalStateException("Failed to parse CSV file", e);
         }
     }
 
@@ -92,9 +92,9 @@ public class CatalogInitializerService implements CatalogInitializerUseCase {
     }
 
     private Author getOrCreateAuthor(String name) {
-        return authorRepository
+        return authorJpaRepository
                 .findByNameIgnoreCase(name)
-                .orElseGet(() -> authorRepository.save(new Author(name)));
+                .orElseGet(() -> authorJpaRepository.save(new Author(name)));
     }
 
     @Data
