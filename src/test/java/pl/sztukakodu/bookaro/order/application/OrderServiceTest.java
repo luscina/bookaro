@@ -90,6 +90,23 @@ class OrderServiceTest {
         bookRepository.save(effective);
     }
 
+    @Test
+    @Transactional
+    public void adminCanRevokeOtherUserOrder(){
+        Book effective = bookRepository.findById(1L).get();
+        effective.setAvailable(50L);
+        bookRepository.save(effective);
+        String recipient = "marek@wp.pl";
+        Long orderId = placeOrder(effective.getId(), 15, recipient);
+        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, "admin@example.pl");
+        service.updateOrderStatus(command);
+
+        assertEquals(50L, getAvailable(effective));
+
+        effective.setAvailable(50L);
+        bookRepository.save(effective);
+    }
+
     private Book givenEffectiveJava(long available) {
         return new Book("Effective Java", 2005, new BigDecimal("99.00"), available);
     }
