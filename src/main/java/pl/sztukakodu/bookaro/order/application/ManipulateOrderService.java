@@ -32,6 +32,7 @@ public class ManipulateOrderService implements ManipulateOrderUseCase {
                 .builder()
                 .recipient(getOrCreateRecipient(command.getRecipient()))
                 .items(items)
+                .delivery(command.getDelivery())
                 .build();
         Order save = repository.save(order);
         bookJpaRepository.saveAll(reduceBooks(items));
@@ -84,8 +85,7 @@ public class ManipulateOrderService implements ManipulateOrderUseCase {
     }
 
     private static boolean hasAccess(UpdateStatusCommand command, Order order) {
-        return command.getEmail().equalsIgnoreCase(order.getRecipient().getEmail()) ||
-                command.getEmail().equalsIgnoreCase("admin@example.pl");
+        return command.getEmail().equalsIgnoreCase(order.getRecipient().getEmail());
     }
 
     private Set<Book> revokeBooks(Set<OrderItem> items) {

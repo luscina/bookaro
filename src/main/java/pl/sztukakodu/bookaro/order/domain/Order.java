@@ -6,6 +6,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pl.sztukakodu.bookaro.jpa.BaseEntity;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -26,6 +28,9 @@ public class Order extends BaseEntity {
     @Builder.Default
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.NEW;
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private Delivery delivery = Delivery.COURIER;
     @CreatedDate
     private LocalDateTime createdAt;
     @LastModifiedDate
@@ -35,5 +40,14 @@ public class Order extends BaseEntity {
         UpdateStatusResult result = this.status.updateStatus(newStatus);
         this.status = result.getStatus();
         return result;
+    }
+    public BigDecimal totalPrice() {
+        return items.stream()
+                .map(item -> item.getBook().getPrice().multiply(new BigDecimal(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public  BigDecimal getDeliveryPrice() {
+        return delivery.getPrice();
     }
 }

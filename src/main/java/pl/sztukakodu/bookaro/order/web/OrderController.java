@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import pl.sztukakodu.bookaro.order.application.RichOrder;
@@ -24,13 +25,13 @@ import static pl.sztukakodu.bookaro.order.application.port.ManipulateOrderUseCas
 public class OrderController {
     private final ManipulateOrderUseCase manipulateOrder;
     private final QueryOrderUseCase queryOrder;
-
+    @Secured({"ROLE_ADMIN"})
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<RichOrder> getOrders() {
         return queryOrder.findAll();
     }
-
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<RichOrder> getById(@PathVariable Long id) {
@@ -38,7 +39,7 @@ public class OrderController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
@@ -55,7 +56,7 @@ public class OrderController {
                     error -> ResponseEntity.badRequest().body(error)
                 );
     }
-
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PutMapping("/{id}/status")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {

@@ -114,34 +114,34 @@ public class CatalogInitializerService implements CatalogInitializerUseCase {
 
     }
 
-    private void placeOrder() {
-        Book efficientJava = catalog.findOneByTitle("Efficient").orElseThrow(() -> new IllegalStateException("Cannot find book"));
-        Book puzzler = catalog.findOneByTitle("Java").orElseThrow(() -> new IllegalStateException("Cannot find book"));
-        Recipient recipient = Recipient
-                .builder()
-                .name("Jan Kowalski")
-                .phone("123-456-789")
-                .street("Armii Krajowej 31")
-                .city("Krakow")
-                .zipCode("30-150")
-                .email("jan@example.org")
-                .build();
-        ManipulateOrderUseCase.PlaceOrderCommand command = ManipulateOrderUseCase.PlaceOrderCommand
-                .builder()
-                .recipient(recipient)
-                .item(new ManipulateOrderUseCase.OrderItemCommand(efficientJava.getId(), 16))
-                .item(new ManipulateOrderUseCase.OrderItemCommand(puzzler.getId(), 7))
-                .build();
-
-        ManipulateOrderUseCase.PlaceOrderResponse response = placeOrder.placeOrder(command);
-        String result = response.handle(
-                orderId -> "Created ORDER with id: " + orderId,
-                error -> "Failed to created order: " + error
-        );
-        log.info(result);
-        queryOrder.findAll()
-                .forEach(order -> log.info("GOT ORDER WITH TOTAL PRICE: " + order.totalPrice() + " DETAILS: " + order));
-    }
+//    private void placeOrder() {
+//        Book efficientJava = catalog.findOneByTitle("Efficient").orElseThrow(() -> new IllegalStateException("Cannot find book"));
+//        Book puzzler = catalog.findOneByTitle("Java").orElseThrow(() -> new IllegalStateException("Cannot find book"));
+//        Recipient recipient = Recipient
+//                .builder()
+//                .name("Jan Kowalski")
+//                .phone("123-456-789")
+//                .street("Armii Krajowej 31")
+//                .city("Krakow")
+//                .zipCode("30-150")
+//                .email("jan@example.org")
+//                .build();
+//        ManipulateOrderUseCase.PlaceOrderCommand command = ManipulateOrderUseCase.PlaceOrderCommand
+//                .builder()
+//                .recipient(recipient)
+//                .item(new ManipulateOrderUseCase.OrderItemCommand(efficientJava.getId(), 16))
+//                .item(new ManipulateOrderUseCase.OrderItemCommand(puzzler.getId(), 7))
+//                .build();
+//
+//        ManipulateOrderUseCase.PlaceOrderResponse response = placeOrder.placeOrder(command);
+//        String result = response.handle(
+//                orderId -> "Created ORDER with id: " + orderId,
+//                error -> "Failed to created order: " + error
+//        );
+//        log.info(result);
+//        queryOrder.findAll()
+//                .forEach(order -> log.info("GOT ORDER WITH TOTAL PRICE: " + order.totalPrice() + " DETAILS: " + order));
+//    }
 
 
 }
