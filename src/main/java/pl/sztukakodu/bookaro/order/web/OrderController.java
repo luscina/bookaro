@@ -1,12 +1,14 @@
 package pl.sztukakodu.bookaro.order.web;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import pl.sztukakodu.bookaro.Security.UserSecurity;
 import pl.sztukakodu.bookaro.order.application.RichOrder;
 import pl.sztukakodu.bookaro.order.application.port.ManipulateOrderUseCase;
 import pl.sztukakodu.bookaro.order.application.port.QueryOrderUseCase;
@@ -17,6 +19,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static pl.sztukakodu.bookaro.order.application.port.ManipulateOrderUseCase.*;
 
 @RestController
@@ -25,6 +28,7 @@ import static pl.sztukakodu.bookaro.order.application.port.ManipulateOrderUseCas
 public class OrderController {
     private final ManipulateOrderUseCase manipulateOrder;
     private final QueryOrderUseCase queryOrder;
+    private final UserSecurity userSecurity;
     @Secured({"ROLE_ADMIN"})
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -34,11 +38,19 @@ public class OrderController {
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<RichOrder> getById(@PathVariable Long id) {
+    public ResponseEntity<RichOrder> getById(@PathVariable Long id, @AuthenticationPrincipal User user) {
         return queryOrder.findById(id)
-                .map(ResponseEntity::ok)
+                .map(order -> authorize(order, user))
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    private ResponseEntity authorize(RichOrder order, User user){
+        if(userSecurity.isOwnerOrAdmin(order.getRecipient().getEmail(), user)){
+            return ResponseEntity.ok(order);
+        }
+        return ResponseEntity.status(FORBIDDEN).build();
+    }
+
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -59,13 +71,17 @@ public class OrderController {
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PutMapping("/{id}/status")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
+    public ResponseEntity<Object> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> body, @AuthenticationPrincipal User user) {
         String status = body.get("status");
         OrderStatus orderStatus = OrderStatus
                 .parseString(status)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown status: " + status));
-        UpdateStatusCommand updateStatusCommand = new UpdateStatusCommand(id, orderStatus, null);
-        manipulateOrder.updateOrderStatus(updateStatusCommand);
+        UpdateStatusCommand updateStatusCommand = new UpdateStatusCommand(id, orderStatus, user);
+        return manipulateOrder.updateOrderStatus(updateStatusCommand)
+                .handle(
+                        newStatus -> ResponseEntity.accepted().build(),
+                        error -> ResponseEntity.status(error.getStatus()).build()
+                );
     }
 
     URI orderUri(Long orderId) {

@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import pl.sztukakodu.bookaro.Clock.Clock;
 import pl.sztukakodu.bookaro.order.application.port.ManipulateOrderUseCase.UpdateStatusCommand;
@@ -22,6 +24,7 @@ public class AbandonedOrdersJob {
     private final OrderJpaRepository repository;
     private final ManipulateOrderUseCase orderUseCase;
     private final OrderProperties properties;
+    private final User systemUser;
     @Scheduled(cron = "${app.orders.abandon-cron}")
     @Transactional
     public void run(){
@@ -30,7 +33,7 @@ public class AbandonedOrdersJob {
         List<Order> orders = repository.findByStatusAndCreatedAtLessThanEqual(OrderStatus.NEW, olderThen);
         log.info("Find orders to be abandoned " + orders.size());
         orders.forEach(order -> {
-            UpdateStatusCommand updateStatusCommand = new UpdateStatusCommand(order.getId(), OrderStatus.ABANDONED, order.getRecipient().getEmail());
+            UpdateStatusCommand updateStatusCommand = new UpdateStatusCommand(order.getId(), OrderStatus.ABANDONED, systemUser);
             orderUseCase.updateOrderStatus(updateStatusCommand);
         });
     }

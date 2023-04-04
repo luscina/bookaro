@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import pl.sztukakodu.bookaro.catalog.application.port.CatalogUseCase;
 import pl.sztukakodu.bookaro.catalog.db.BookJpaRepository;
 import pl.sztukakodu.bookaro.catalog.domain.Book;
@@ -15,6 +17,7 @@ import pl.sztukakodu.bookaro.order.domain.OrderStatus;
 import pl.sztukakodu.bookaro.order.domain.Recipient;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -81,7 +84,7 @@ class OrderServiceTest {
         bookRepository.save(effective);
         String recipient = "adam@wp.pl";
         Long orderId = placeOrder(effective.getId(), 15, recipient);
-        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, "marek@wp.pl");
+        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, user(recipient));
         service.updateOrderStatus(command);
 
         assertEquals(35L, getAvailable(effective));
@@ -98,7 +101,7 @@ class OrderServiceTest {
         bookRepository.save(effective);
         String recipient = "marek@wp.pl";
         Long orderId = placeOrder(effective.getId(), 15, recipient);
-        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, "admin@example.pl");
+        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, adminUser());
         service.updateOrderStatus(command);
 
         assertEquals(50L, getAvailable(effective));
@@ -112,6 +115,14 @@ class OrderServiceTest {
     }
     private Book givenJavaConcurrency(long available) {
         return new Book("Java Concurency", 2001, new BigDecimal("19.99"), available);
+    }
+
+    private User user(String email){
+        return new User(email, "", List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+    }
+
+    private User adminUser(){
+        return new User("systemUser", "", List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
     }
     private Recipient recipient(){
         return Recipient.builder().email("slowik@onet.pl").build();
