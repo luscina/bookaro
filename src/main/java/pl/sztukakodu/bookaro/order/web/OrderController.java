@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import pl.sztukakodu.bookaro.Security.UserSecurity;
@@ -38,13 +39,13 @@ public class OrderController {
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<RichOrder> getById(@PathVariable Long id, @AuthenticationPrincipal User user) {
+    public ResponseEntity<RichOrder> getById(@PathVariable Long id, @AuthenticationPrincipal UserDetails user) {
         return queryOrder.findById(id)
                 .map(order -> authorize(order, user))
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    private ResponseEntity authorize(RichOrder order, User user){
+    private ResponseEntity authorize(RichOrder order, UserDetails user){
         if(userSecurity.isOwnerOrAdmin(order.getRecipient().getEmail(), user)){
             return ResponseEntity.ok(order);
         }
@@ -71,7 +72,7 @@ public class OrderController {
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PutMapping("/{id}/status")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<Object> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> body, @AuthenticationPrincipal User user) {
+    public ResponseEntity<Object> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> body, @AuthenticationPrincipal UserDetails user) {
         String status = body.get("status");
         OrderStatus orderStatus = OrderStatus
                 .parseString(status)

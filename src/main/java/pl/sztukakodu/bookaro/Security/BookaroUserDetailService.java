@@ -10,8 +10,12 @@ import pl.sztukakodu.bookaro.user.domain.UserEntityRepository;
 public class BookaroUserDetailService implements UserDetailsService {
 
     private final UserEntityRepository userEntityRepository;
+    private final AdminConfig config;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        if(config.getUsername().equalsIgnoreCase(username)){
+            return config.adminUser();
+        }
         return userEntityRepository.findByUsernameIgnoreCase(username)
                 .map(UserEntityDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
