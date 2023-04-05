@@ -45,6 +45,7 @@ public class BookaroSecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET, "/catalog/**", "/uploads/**", "/authors/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/orders/**", "/login", "/users").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").hasRole("ADMIN")
                 .anyRequest()
                 .authenticated()
         .and()
